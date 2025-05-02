@@ -160,6 +160,7 @@ class AgMonst3r:
         # For global alignment using a sliding window approach
         # If the number of frames in the video is greater than the window size, it will be run multiple times.
         if args.window_wise and args.prev_output_dir is not None:
+            print("Using previous video results")
             prev_num_frames = int(args.window_size * args.window_overlap_ratio)
             prev_video_results = load_prev_video_results(
                 args.prev_output_dir,
@@ -177,6 +178,7 @@ class AgMonst3r:
             )
         else:
             prev_video_results = None
+            print("Not using previous video results")
             imgs = load_images(
                 filelist,
                 size=image_size,
@@ -300,6 +302,7 @@ class AgMonst3r:
             img_paths = []
             frame_id_list = self.video_id_frame_id_list[video_id]
             frame_id_list = sorted(list(np.unique(frame_id_list)))
+
             video_skip_counter = 0
             for frame_id in frame_id_list:
                 # Check if Monst3r output directory already exists
@@ -312,6 +315,16 @@ class AgMonst3r:
                     img_paths.append(img_path)
                 else:
                     assert False, f"Image {img_path} does not exist."
+
+            # If the number of frames is larger than 50 then set to automatically execute using windows else use normal
+            if len(img_paths) > 50:
+                args.window_wise = True
+                args.window_size = 50
+                args.window_overlap_ratio = 0.5
+            else:
+                args.window_wise = False
+                args.window_size = 100
+                args.window_overlap_ratio = 0.5
 
             # print(f"Video {video_id} has {len(img_paths)} frames, skipped {video_skip_counter} frames.")
             if len(img_paths) == 0:
