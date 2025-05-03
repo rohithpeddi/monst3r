@@ -303,6 +303,10 @@ class AgMonst3r:
             frame_id_list = self.video_id_frame_id_list[video_id]
             frame_id_list = sorted(list(np.unique(frame_id_list)))
 
+            if len(frame_id_list) > 250:
+                print(f"Video {video_id} has more than 250 frames, skipping...")
+                continue
+
             video_skip_counter = 0
             for frame_id in frame_id_list:
                 # Check if Monst3r output directory already exists
