@@ -33,7 +33,7 @@ ICLR, 2025. [**[Project Page]**](https://monst3r-project.github.io/) [**[Paper]*
 
 1. Clone MonST3R.
 ```bash
-git clone --recursive https://github.com/junyi42/monst3r
+git clone --recursive https://github.com/rohithpeddi/monst3r.git
 cd monst3r
 ## if you have already cloned monst3r:
 # git submodule update --init --recursive
