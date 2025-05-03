@@ -107,7 +107,7 @@ class AgMonst3r:
             video_id=video_id,
             filelist=img_path_list,
             schedule='linear',
-            niter=300,
+            niter=args.niter,
             scenegraph_type='swinstride',
             winsize=5,
             refid=0,
@@ -335,9 +335,11 @@ class AgMonst3r:
                 args.window_wise = True
                 args.window_size = 50
                 args.window_overlap_ratio = 0.5
+                args.niter = 100
             else:
                 args.window_wise = False
                 args.window_size = 100
+                args.niter = 200
                 args.window_overlap_ratio = 0.5
 
             # print(f"Video {video_id} has {len(img_paths)} frames, skipped {video_skip_counter} frames.")
@@ -386,6 +388,7 @@ def main():
     parser_url.add_argument("--server_name", type=str, default=None, help="server url, default is 127.0.0.1")
 
     parser.add_argument("--ag_root_dir", type=str, default='/data/rohith/ag/')
+    parser.add_argument("--niter", type=int, default=200, help="number of iterations")
     parser.add_argument("--datapath", type=str, help="Path to input images directory", default='/data/rohith/ag/')
     parser.add_argument("--image_size", type=int, default=512, choices=[512, 224], help="image size")
     parser.add_argument("--server_port", type=int, help=("will start gradio app on this port (if available). "
