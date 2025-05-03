@@ -350,6 +350,11 @@ class AgMonst3r:
                     self.video_monst3r_eval(video_id, img_paths, args)
             except RuntimeError as e:
                 print(f"Error processing video {video_id}: {e}")
+                # Delete the output directory if it exists
+                ag_monst3r_output_path = os.path.join(self.ag_monst3r_root, video_id)
+                if os.path.exists(ag_monst3r_output_path):
+                    import shutil
+                    shutil.rmtree(ag_monst3r_output_path)
                 continue
 
             # Clear the cache
