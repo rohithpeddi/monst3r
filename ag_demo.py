@@ -342,11 +342,15 @@ class AgMonst3r:
                 args.niter = 200
                 args.window_overlap_ratio = 0.5
 
-            # print(f"Video {video_id} has {len(img_paths)} frames, skipped {video_skip_counter} frames.")
-            if len(img_paths) == 0:
+            try:
+                # print(f"Video {video_id} has {len(img_paths)} frames, skipped {video_skip_counter} frames.")
+                if len(img_paths) == 0:
+                    continue
+                else:
+                    self.video_monst3r_eval(video_id, img_paths, args)
+            except RuntimeError as e:
+                print(f"Error processing video {video_id}: {e}")
                 continue
-            else:
-                self.video_monst3r_eval(video_id, img_paths, args)
 
             # Clear the cache
             torch.cuda.empty_cache()
@@ -428,6 +432,7 @@ def main():
 
     # Init the AGMonst3r class
     ag_monst3r = AgMonst3r(args, args.ag_root_dir, args.datapath)
+
     ag_monst3r.generate_data(args)
 
 
