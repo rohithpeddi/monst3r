@@ -157,6 +157,9 @@ class AgMonst3r:
         if not os.path.exists(dynamic_mask_root_dir):
             os.makedirs(dynamic_mask_root_dir)
 
+        print("----------------------------------------------------------------------------")
+        print("Step-1: Loading images and running dust3r inference")
+
         # For global alignment using a sliding window approach
         # If the number of frames in the video is greater than the window size, it will be run multiple times.
         if args.window_wise and args.prev_output_dir is not None:
@@ -178,7 +181,7 @@ class AgMonst3r:
             )
         else:
             prev_video_results = None
-            print("Not using previous video results")
+            print("NOT using previous video results")
             imgs = load_images(
                 filelist,
                 size=image_size,
@@ -198,6 +201,10 @@ class AgMonst3r:
 
         pairs = make_pairs(imgs, scene_graph=scenegraph_type, prefilter=None, symmetrize=True)
         output = inference(pairs, model, device, batch_size=args.batch_size, verbose=not silent)
+
+        print("----------------------------------------------------------------------------")
+        print("Step-2: Running global alignment")
+
         # TODO YYJ del model
         if len(imgs) > 2:
             mode = GlobalAlignerMode.PointCloudOptimizer
@@ -269,6 +276,9 @@ class AgMonst3r:
             imgs.append(rgb(confs[i]))
             imgs.append(rgb(init_confs[i]))
 
+        print("----------------------------------------------------------------------------")
+        print("Step-3: Running dynamic mask computation")
+
         # if two images, and the shape is same, we can compute the dynamic mask
         if len(rgbimg) == 2 and rgbimg[0].shape == rgbimg[1].shape:
             motion_mask_thre = 0.35
@@ -303,7 +313,7 @@ class AgMonst3r:
             frame_id_list = self.video_id_frame_id_list[video_id]
             frame_id_list = sorted(list(np.unique(frame_id_list)))
 
-            if len(frame_id_list) > 250:
+            if len(frame_id_list) > 200:
                 print(f"Video {video_id} has more than 250 frames, skipping...")
                 continue
 
@@ -335,6 +345,12 @@ class AgMonst3r:
                 continue
             else:
                 self.video_monst3r_eval(video_id, img_paths, args)
+
+            # Clear the cache
+            torch.cuda.empty_cache()
+            print(f"Video {video_id} processed successfully.")
+            print("-------------------------------------------------------------------------")
+
         print("Depth estimation completed for all videos.")
 
     @staticmethod
