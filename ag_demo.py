@@ -356,6 +356,14 @@ class AgMonst3r:
                     import shutil
                     shutil.rmtree(ag_monst3r_output_path)
                 continue
+            except Exception as e:
+                print(f"Unexpected error processing video {video_id}: {e}")
+                # Delete the output directory if it exists
+                ag_monst3r_output_path = os.path.join(self.ag_monst3r_root, video_id)
+                if os.path.exists(ag_monst3r_output_path):
+                    import shutil
+                    shutil.rmtree(ag_monst3r_output_path)
+                continue
 
             # Clear the cache
             torch.cuda.empty_cache()
